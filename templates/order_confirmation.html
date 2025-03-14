@@ -1,0 +1,73 @@
+<!-- templates/order_confirmation.html -->
+{% extends "base.html" %}
+
+{% block title %}Order Confirmation - Perfume Paradise{% endblock %}
+
+{% block content %}
+<div class="text-center mb-5">
+    <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" class="bi bi-check-circle-fill text-success mb-3" viewBox="0 0 16 16">
+        <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+    </svg>
+    <h1>Thank You for Your Order!</h1>
+    <p class="lead">Your order has been received and is being processed.</p>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Order #{{ order.id }}</h5>
+            </div>
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h6>Customer Information</h6>
+                        <p>{{ order.first_name }} {{ order.last_name }}<br>
+                        Phone: {{ order.phone_number }}<br>
+                        Wilaya: {{ order.wilaya }}</p>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <h6>Order Details</h6>
+                        <p>Date: {{ order.created_at.strftime('%B %d, %Y') }}<br>
+                        Total: ${{ order.total_amount }}<br>
+                        Status: <span class="badge bg-warning text-dark">{{ order.status }}</span></p>
+                    </div>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in order.items %}
+                            <tr>
+                                <td>{{ item.product.name }}</td>
+                                <td>${{ item.price }}</td>
+                                <td>{{ item.quantity }}</td>
+                                <td>${{ (item.price * item.quantity) | round(2) }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="3" class="text-end"><strong>Total:</strong></td>
+                                <td><strong>${{ order.total_amount }}</strong></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center">
+            <a href="{{ url_for('products') }}" class="btn btn-primary">Continue Shopping</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

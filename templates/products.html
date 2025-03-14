@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Perfume Paradise - Products{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Our Collection</h1>
+
+<div class="row">
+    {% for perfume in perfumes %}
+        <div class="col-md-4 mb-4">
+            <div class="card product-card h-100">
+                <img src="{{ perfume.image_url }}" class="card-img-top" alt="{{ perfume.name }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ perfume.name }}</h5>
+                    <p class="card-text">{{ perfume.brand }}</p>
+                    <p class="card-text">${{ perfume.price }}</p>
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('product_detail', product_id=perfume.id) }}" class="btn btn-primary">View Details</a>
+                        <a href="{{ url_for('add_to_cart', product_id=perfume.id) }}" class="btn btn-success">Add to Cart</a>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}
+

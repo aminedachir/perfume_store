@@ -1,0 +1,15 @@
+/* Add this to your static/css/custom.css file or inside a <style> tag in your base.html */
+
+.cart-icon {
+    font-size: 1.2rem;
+    transition: transform 0.2s ease;
+}
+
+.cart-icon:hover {
+    transform: scale(1.1);
+}
+
+.badge-cart {
+    font-size: 0.6rem;
+}
+

@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Orders - Perfume Paradise{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4 text-center text-primary">Customer Orders</h1>
+    
+    {% if orders %}
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Customer</th>
+                        <th>Phone</th>
+                        <th>Wilaya</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td>{{ order.id }}</td>
+                        <td>{{ order.first_name }} {{ order.last_name }}</td>
+                        <td>{{ order.phone_number }}</td>
+                        <td>{{ order.wilaya }}</td>
+                        <td>${{ order.total_amount }}</td>
+                        <td>
+                            <span class="badge bg-{% if order.status == 'Pending' %}warning{% elif order.status == 'Shipped' %}info{% elif order.status == 'Delivered' %}success{% else %}secondary{% endif %}">
+                                {{ order.status }}
+                            </span>
+                        </td>
+                        <td>{{ order.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                        <td>
+                            <a href="{{ url_for('admin_order_detail', order_id=order.id) }}" class="btn btn-outline-primary btn-sm">
+                                View Details
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="alert alert-info">No orders have been placed yet.</div>
+    {% endif %}
+</div>
+{% endblock %}
