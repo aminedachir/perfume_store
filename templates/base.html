@@ -11,26 +11,106 @@
             font-weight: bold;
             font-size: 1.5rem;
         }
+       /* Enhanced Product Styling with Increased Height */
         .product-card {
-            transition: transform 0.3s;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            border-radius: 8px;
+            height: 450px; /* Increased overall card height */
         }
+
         .product-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
         }
-        .hero-section {
-            background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1615634376658-c80abf877da2');
-            background-size: cover;
-            background-position: center;
-            color: white;
-            padding: 150px 0;
-            text-align: center;
+
+        .product-card img {
+            height: 320px; /* Increased image height */
+            object-fit: cover;
+            transition: all 0.5s ease;
         }
-        footer {
-            margin-top: 50px;
-            padding: 20px 0;
+
+        .product-card:hover img {
+            transform: scale(1.05);
+        }
+
+        .product-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .product-card:hover .product-overlay {
+            opacity: 1;
+        }
+
+        .price-tag {
+            font-weight: bold;
+            color: #4a4a4a;
+            font-size: 1.1rem;
+        }
+
+        .product-card .btn {
+            transition: all 0.3s ease;
+        }
+
+        .product-card .btn:hover {
+            transform: scale(1.05);
+        }
+
+        .card-body {
+            padding: 1.5rem; /* Increased padding inside card body */
+        }
+                .hero-section {
+                    background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://ibb.co/Gv4XvkKq');
+                    background-size: cover;
+                    background-position: center;
+                    color: white;
+                    padding: 150px 0;
+                    text-align: center;
+                }
+                /* Enhanced Product Image Styling */
+        .product-image {
+            height: 320px;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .product-card:hover .product-image {
+            transform: scale(1.08);
+        }
+
+        /* Image placeholder styling */
+        .placeholder-image {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 320px;
             background-color: #f8f9fa;
+            color: #6c757d;
+            font-size: 0.9rem;
         }
+
+        /* Fix for the image overlay */
+        .product-card .position-relative {
+            overflow: hidden;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+                footer {
+                    margin-top: 50px;
+                    padding: 20px 0;
+                    background-color: #f8f9fa;
+                }
     </style>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -61,7 +141,7 @@
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container">
-        <a class="navbar-brand" href="{{ url_for('home') }}">Perfume Paradise</a>
+        <a class="navbar-brand" href="{{ url_for('home') }}">Perfume Shop</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>

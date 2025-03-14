@@ -353,6 +353,38 @@ def update_order_status(order_id):
     
     return redirect(url_for('admin_order_detail', order_id=order.id))
 
+@app.route('/admin/delete_product/<int:product_id>', methods=['POST'])
+def delete_product(product_id):
+    if not session.get('admin_logged_in'):
+        flash('Please login first', 'warning')
+        return redirect(url_for('admin_login'))
+    
+    product = Product.query.get_or_404(product_id)
+    db.session.delete(product)
+    db.session.commit()
+    flash('Product deleted successfully!', 'success')
+    return redirect(url_for('admin_dashboard'))
+
+@app.route('/admin/edit_product/<int:product_id>', methods=['GET', 'POST'])
+def edit_product(product_id):
+    if not session.get('admin_logged_in'):
+        flash('Please login first', 'warning')
+        return redirect(url_for('admin_login'))
+    
+    product = Product.query.get_or_404(product_id)
+    
+    if request.method == 'POST':
+        product.name = request.form.get('name')
+        product.brand = request.form.get('brand')
+        product.description = request.form.get('description')
+        product.price = float(request.form.get('price'))
+        product.image_url = request.form.get('image_url')
+        
+        db.session.commit()
+        flash('Product updated successfully!', 'success')
+        return redirect(url_for('admin_dashboard'))
+    
+    return render_template('edit_product.html', product=product)
 
 # Initialize database with sample data
 @app.cli.command('init-db')
@@ -369,31 +401,32 @@ def init_db():
     if not Product.query.first():
         sample_products = [
             Product(
-                name='Chanel No. 5',
+                name='amine No. 5',
                 brand='Chanel',
                 description='A classic floral fragrance with notes of rose and jasmine.',
                 price=160.00,
-                image_url='https://ibb.co/QvbcBDqf'
+                image_url='/static/img/chanel_no5.jpg'
             ),
             Product(
                 name='Dior Sauvage',
                 brand='Dior',
                 description='A fresh and spicy masculine fragrance with notes of bergamot and pepper.',
                 price=95.00,
-                image_url='https://ibb.co/QvbcBDqf'
+                image_url='https://i.ibb.co/MxZKhzCh/images.jpg'
             ),
             Product(
                 name='Flowerbomb',
                 brand='Viktor & Rolf',
                 description='An explosive floral fragrance with notes of jasmine, rose, and patchouli.',
                 price=85.00,
-                image_url='https://placeholder.com/perfume3.jpg'
+                image_url='https://i.ibb.co/MxZKhzCh/images.jpg'
             )
         ]
         db.session.add_all(sample_products)
-    
+        
     db.session.commit()
     print('Database initialized with sample data')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.getenv("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)

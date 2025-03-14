@@ -3,26 +3,33 @@
 {% block title %}Perfume Paradise - Products{% endblock %}
 
 {% block content %}
-<h1 class="mb-4">Our Collection</h1>
-
-<div class="row">
-    {% for perfume in perfumes %}
-        <div class="col-md-4 mb-4">
-            <div class="card product-card h-100">
-                <img src="{{ perfume.image_url }}" class="card-img-top" alt="{{ perfume.name }}">
-                <div class="card-body">
-                    <h5 class="card-title">{{ perfume.name }}</h5>
-                    <p class="card-text">{{ perfume.brand }}</p>
-                    <p class="card-text">${{ perfume.price }}</p>
-                    <div class="d-flex justify-content-between">
-                        <a href="{{ url_for('product_detail', product_id=perfume.id) }}" class="btn btn-primary">View Details</a>
-                        <a href="{{ url_for('add_to_cart', product_id=perfume.id) }}" class="btn btn-success">Add to Cart</a>
+<div class="container">
+    <h1 class="text-center my-5">Our Luxury Collection</h1>
+    
+    <div class="row">
+        {% for perfume in perfumes %}
+            <div class="col-md-4 mb-5"> <!-- Increased bottom margin for more space between rows -->
+                <div class="card product-card border-0 shadow-sm">
+                    <div class="position-relative overflow-hidden">
+                        <img src="{{ perfume.image_url }}" 
+                        class="card-img-top product-image" 
+                        alt="{{ perfume.name }}"
+                        onerror="this.src='/static/img/perfume-placeholder.jpg'; this.onerror=null;">
+                             <div class="product-overlay">
+                                <a href="{{ url_for('product_detail', product_id=perfume.id) }}" class="btn btn-sm btn-light mb-2">View Details</a>
+                                <a href="{{ url_for('add_to_cart', product_id=perfume.id) }}" class="btn btn-sm btn-success">Add to Cart</a>
+                            </div>
+                    </div>
+                    <div class="card-body text-center d-flex flex-column justify-content-between">
+                        <div>
+                            <h5 class="card-title">{{ perfume.name }}</h5>
+                            <p class="card-text text-muted">{{ perfume.brand }}</p>
+                        </div>
+                        <p class="card-text price-tag mt-3">${{ perfume.price }}</p>
                     </div>
                 </div>
-                
             </div>
-        </div>
-    {% endfor %}
+        {% endfor %}
+    </div>
 </div>
 {% endblock %}
-
