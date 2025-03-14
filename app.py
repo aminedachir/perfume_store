@@ -52,7 +52,6 @@ class OrderItem(db.Model):
     order = db.relationship('Order', backref=db.backref('items', lazy=True))
     product = db.relationship('Product')
 
-# Add this to app.py before your routes
 @app.context_processor
 def inject_cart_count():
     def get_cart_count():
@@ -316,7 +315,6 @@ def order_confirmation(order_id):
     order = Order.query.get_or_404(order_id)
     return render_template('order_confirmation.html', order=order)
 
-# Add this route for admin to view orders
 @app.route('/admin/orders')
 def admin_orders():
     if not session.get('admin_logged_in'):
@@ -326,7 +324,6 @@ def admin_orders():
     orders = Order.query.order_by(Order.created_at.desc()).all()
     return render_template('admin_orders.html', orders=orders)
 
-# Add this route for admin to view order details
 @app.route('/admin/order/<int:order_id>')
 def admin_order_detail(order_id):
     if not session.get('admin_logged_in'):
@@ -336,7 +333,6 @@ def admin_order_detail(order_id):
     order = Order.query.get_or_404(order_id)
     return render_template('admin_order_detail.html', order=order)
 
-# Add this route for admin to update order status
 @app.route('/admin/order/<int:order_id>/update_status', methods=['POST'])
 def update_order_status(order_id):
     if not session.get('admin_logged_in'):
@@ -386,18 +382,15 @@ def edit_product(product_id):
     
     return render_template('edit_product.html', product=product)
 
-# Initialize database with sample data
 @app.cli.command('init-db')
 def init_db():
     db.create_all()
     
-    # Create admin user
     if not Admin.query.filter_by(username='admin').first():
         admin = Admin(username='admin')
         admin.set_password('admin123')
         db.session.add(admin)
     
-    # Add sample products
     if not Product.query.first():
         sample_products = [
             Product(
