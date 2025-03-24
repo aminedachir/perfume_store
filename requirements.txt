@@ -1,0 +1,4 @@
+Flask==2.2.5
+Flask-SQLAlchemy==3.0.3
+Werkzeug==2.2.3
+bcrypt==4.0.1
