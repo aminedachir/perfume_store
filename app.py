@@ -403,8 +403,8 @@ def setup():
         # Check if admin already exists
         existing_admin = Admin.query.filter_by(username='amine').first()
         if not existing_admin:
-            admin = Admin(username='amine')
-            admin.set_password('admin123')  # Change to a secure password
+            admin = Admin(username='dachir')
+            admin.set_password('dachir123')  # Change to a secure password
             db.session.add(admin)
             db.session.commit()
             msg = "Admin user created (username: amine, password: admin123)"
@@ -457,8 +457,8 @@ def init_db():
         # Check if admin exists, create if not
         existing_admin = Admin.query.filter_by(username='admin').first()
         if not existing_admin:
-            admin = Admin(username='admin')
-            admin.set_password('admin123')
+            admin = Admin(username='dachiro')
+            admin.set_password('dachiro123')
             db.session.add(admin)
             db.session.commit()
             print('Admin user created successfully')
@@ -485,7 +485,7 @@ def init_db():
 
 @app.cli.command('delete-admin')
 def delete_admin():
-    admin = Admin.query.filter_by(username='admin').first()
+    admin = Admin.query.filter_by(username='dachir').first()
     if admin:
         db.session.delete(admin)
         db.session.commit()
