@@ -398,18 +398,18 @@ def edit_product(product_id):
 @app.route('/setup', methods=['GET'])
 def setup():
     try:
-        # Create the database
         db.create_all()
 
-        # Create default admin if not exists
-        if not Admin.query.filter_by(username='admin').first():
+        # Check if admin already exists
+        existing_admin = Admin.query.filter_by(username='amine').first()
+        if not existing_admin:
             admin = Admin(username='amine')
-            admin.set_password('amine0')
+            admin.set_password('admin123')  # Change to a secure password
             db.session.add(admin)
             db.session.commit()
-            msg = "Admin user created. Username: admin, Password: admin123"
+            msg = "Admin user created (username: amine, password: admin123)"
         else:
-            msg = "Admin user already exists."
+            msg = "Admin user already exists. Skipping creation."
 
         # Add sample products if not exist
         if not Product.query.first():
@@ -446,6 +446,7 @@ def setup():
 
     except Exception as e:
         return f"Error during setup: {str(e)}", 500
+
 
 
 @app.cli.command('init-db')
