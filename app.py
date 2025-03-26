@@ -395,6 +395,59 @@ def edit_product(product_id):
     
     return render_template('edit_product.html', product=product)
 
+@app.route('/setup', methods=['GET'])
+def setup():
+    try:
+        # Create the database
+        db.create_all()
+
+        # Create default admin if not exists
+        if not Admin.query.filter_by(username='admin').first():
+            admin = Admin(username='admin')
+            admin.set_password('admin123')
+            db.session.add(admin)
+            db.session.commit()
+            msg = "Admin user created. Username: admin, Password: admin123"
+        else:
+            msg = "Admin user already exists."
+
+        # Add sample products if not exist
+        if not Product.query.first():
+            sample_products = [
+                Product(
+                    name='Amine No. 5',
+                    brand='Chanel',
+                    description='A classic floral fragrance with notes of rose and jasmine.',
+                    price=160.00,
+                    image_url='/static/img/chanel_no5.jpg'
+                ),
+                Product(
+                    name='Dior Sauvage',
+                    brand='Dior',
+                    description='A fresh and spicy masculine fragrance with notes of bergamot and pepper.',
+                    price=95.00,
+                    image_url='https://i.ibb.co/MxZKhzCh/images.jpg'
+                ),
+                Product(
+                    name='Flowerbomb',
+                    brand='Viktor & Rolf',
+                    description='An explosive floral fragrance with notes of jasmine, rose, and patchouli.',
+                    price=85.00,
+                    image_url='https://i.ibb.co/MxZKhzCh/images.jpg'
+                )
+            ]
+            db.session.add_all(sample_products)
+            db.session.commit()
+            msg += "\nSample products added."
+        else:
+            msg += "\nSample products already exist."
+        
+        return f"Setup completed: \n{msg}", 200
+
+    except Exception as e:
+        return f"Error during setup: {str(e)}", 500
+
+
 @app.cli.command('init-db')
 def init_db():
     try:
