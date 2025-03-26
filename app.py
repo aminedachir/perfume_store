@@ -429,7 +429,7 @@ def init_db():
         print(f"Error initializing database: {e}")
         db.session.rollback()
 
-if __name__ == '__main__':
-    #port = int(os.getenv("PORT", 5000))
-    #app.run(host='0.0.0.0', port=port)
-    app.run(debug=True)
+if __name__ == "__main__":
+    port = int(os.getenv("PORT", 10000))
+    app.run(host='0.0.0.0', port=port)
+
