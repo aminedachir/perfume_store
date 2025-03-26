@@ -6,16 +6,16 @@ import os
 from datetime import datetime
 from flask_cors import CORS
 import logging
+import traceback
 
 
 app = Flask(__name__)
 CORS(app)
 app.config['SECRET_KEY'] = os.urandom(24)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///perfume_shop.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///perfume_shop.db').replace('postgres://', 'postgresql://')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
-logging.basicConfig(level=logging.DEBUG)
 
 # Models
 class Admin(db.Model):
@@ -86,21 +86,23 @@ def admin_login():
             username = request.form.get('username')
             password = request.form.get('password')
             
-            # Example credentials check (replace with your actual logic)
-            if username == 'admin' and password == 'password123':
+            admin = Admin.query.filter_by(username=username).first()
+            
+            if admin and admin.check_password(password):
                 session['admin_logged_in'] = True
-                logging.info(f"Admin {username} logged in successfully")
+                flash('Login successful!', 'success')
                 return redirect(url_for('admin_dashboard'))
             else:
-                logging.warning(f"Failed login attempt for username: {username}")
-                return jsonify({"error": "Invalid credentials"}), 401
-        
-        # If it's a GET request, show the login page
-        return render_template('admin_login.html')
-
+                flash('Invalid username or password', 'danger')
     except Exception as e:
-        app.logger.error(f"Error in admin login: {str(e)}")
-        return jsonify({"error": "An internal error occurred"}), 500
+        app.logger.error(f"Login error: {str(e)}")
+        app.logger.error(traceback.format_exc())
+        flash('An unexpected error occurred', 'danger')
+    
+    return render_template('admin_login.html')
+    
+if not app.debug:
+    logging.basicConfig(level=logging.ERROR)
 
 @app.route('/admin/dashboard')
 def admin_dashboard():
@@ -395,41 +397,37 @@ def edit_product(product_id):
 
 @app.cli.command('init-db')
 def init_db():
-    db.create_all()
-    
-    if not Admin.query.filter_by(username='admin').first():
-        admin = Admin(username='admin')
-        admin.set_password('admin123')
-        db.session.add(admin)
-    
-    if not Product.query.first():
-        sample_products = [
-            Product(
-                name='amine No. 5',
-                brand='Chanel',
-                description='A classic floral fragrance with notes of rose and jasmine.',
-                price=160.00,
-                image_url='/static/img/chanel_no5.jpg'
-            ),
-            Product(
-                name='Dior Sauvage',
-                brand='Dior',
-                description='A fresh and spicy masculine fragrance with notes of bergamot and pepper.',
-                price=95.00,
-                image_url='https://i.ibb.co/MxZKhzCh/images.jpg'
-            ),
-            Product(
-                name='Flowerbomb',
-                brand='Viktor & Rolf',
-                description='An explosive floral fragrance with notes of jasmine, rose, and patchouli.',
-                price=85.00,
-                image_url='https://i.ibb.co/MxZKhzCh/images.jpg'
-            )
-        ]
-        db.session.add_all(sample_products)
+    try:
+        db.create_all()
         
-    db.session.commit()
-    print('Database initialized with sample data')
+        # Check if admin exists, create if not
+        existing_admin = Admin.query.filter_by(username='admin').first()
+        if not existing_admin:
+            admin = Admin(username='admin')
+            admin.set_password('admin123')
+            db.session.add(admin)
+            db.session.commit()
+            print('Admin user created successfully')
+        
+        # Add sample products if none exist
+        if not Product.query.first():
+            sample_products = [
+                Product(
+                    name='amine No. 5',
+                    brand='Chanel',
+                    description='A classic floral fragrance with notes of rose and jasmine.',
+                    price=160.00,
+                    image_url='/static/img/chanel_no5.jpg'
+                ),
+                # ... other products ...
+            ]
+            db.session.add_all(sample_products)
+            db.session.commit()
+        
+        print('Database initialized with sample data')
+    except Exception as e:
+        print(f"Error initializing database: {e}")
+        db.session.rollback()
 
 if __name__ == '__main__':
     #port = int(os.getenv("PORT", 5000))
