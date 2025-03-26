@@ -5,3 +5,4 @@ bcrypt==4.0.1
 Flask-CORS==3.0.10
 gunicorn==21.2.0
 python-dotenv==1.0.0
+psycopg2-binary==2.9.9
