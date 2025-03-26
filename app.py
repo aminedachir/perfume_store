@@ -403,8 +403,8 @@ def setup():
 
         # Create default admin if not exists
         if not Admin.query.filter_by(username='admin').first():
-            admin = Admin(username='admin')
-            admin.set_password('admin123')
+            admin = Admin(username='amine')
+            admin.set_password('amine0')
             db.session.add(admin)
             db.session.commit()
             msg = "Admin user created. Username: admin, Password: admin123"
@@ -481,6 +481,16 @@ def init_db():
     except Exception as e:
         print(f"Error initializing database: {e}")
         db.session.rollback()
+
+@app.cli.command('delete-admin')
+def delete_admin():
+    admin = Admin.query.filter_by(username='admin').first()
+    if admin:
+        db.session.delete(admin)
+        db.session.commit()
+        print("Admin user deleted.")
+    else:
+        print("No admin user found.")
 
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 10000))
