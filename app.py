@@ -4,9 +4,11 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
 from datetime import datetime
+from flask_cors import CORS
 
 
 app = Flask(__name__)
+CORS(app)
 app.config['SECRET_KEY'] = os.urandom(24)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///perfume_shop.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -421,5 +423,6 @@ def init_db():
     print('Database initialized with sample data')
 
 if __name__ == '__main__':
-    port = int(os.getenv("PORT", 5000))
-    app.run(host='0.0.0.0', port=port)
+    #port = int(os.getenv("PORT", 5000))
+    #app.run(host='0.0.0.0', port=port)
+    app.run(debug=True)
