@@ -5,6 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import os
 from datetime import datetime
 from flask_cors import CORS
+import logging
 
 
 app = Flask(__name__)
@@ -13,6 +14,8 @@ app.config['SECRET_KEY'] = os.urandom(24)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///perfume_shop.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
+
+logging.basicConfig(level=logging.DEBUG)
 
 # Models
 class Admin(db.Model):
@@ -78,20 +81,26 @@ def product_detail(product_id):
 
 @app.route('/admin/login', methods=['GET', 'POST'])
 def admin_login():
-    if request.method == 'POST':
-        username = request.form.get('username')
-        password = request.form.get('password')
+    try:
+        if request.method == 'POST':
+            username = request.form.get('username')
+            password = request.form.get('password')
+            
+            # Example credentials check (replace with your actual logic)
+            if username == 'admin' and password == 'password123':
+                session['admin_logged_in'] = True
+                logging.info(f"Admin {username} logged in successfully")
+                return redirect(url_for('admin_dashboard'))
+            else:
+                logging.warning(f"Failed login attempt for username: {username}")
+                return jsonify({"error": "Invalid credentials"}), 401
         
-        admin = Admin.query.filter_by(username=username).first()
-        
-        if admin and admin.check_password(password):
-            session['admin_logged_in'] = True
-            flash('Login successful!', 'success')
-            return redirect(url_for('admin_dashboard'))
-        else:
-            flash('Invalid username or password', 'danger')
-    
-    return render_template('admin_login.html')
+        # If it's a GET request, show the login page
+        return render_template('admin_login.html')
+
+    except Exception as e:
+        app.logger.error(f"Error in admin login: {str(e)}")
+        return jsonify({"error": "An internal error occurred"}), 500
 
 @app.route('/admin/dashboard')
 def admin_dashboard():
